@@ -75,3 +75,15 @@ A Case may evolve by adding or removing service needs while it remains active.
 ### Rationale
 
 Needs often change as assistance progresses.
+
+---
+
+## D007 - Adopt a Monorepo structure
+
+**Status:** Accepted
+
+Monorepo structure with separate backend and frontend directories
+
+### Rationale
+
+Keep everything in one place and share necessary code
