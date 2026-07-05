@@ -54,3 +54,6 @@ coverage/
 
 # Prisma migrations are source code
 # so DON'T ignore prisma/
+
+# Prisma generated client (if using custom output)
+backend/src/generated/prisma/
