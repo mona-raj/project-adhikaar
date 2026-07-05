@@ -28,6 +28,30 @@ The following terms have precise meanings within Project Adhikaar.
 | Anonymous                   | A Help Seeker who chooses not to disclose personally identifying information beyond what is necessary to receive assistance. |
 | Verified Organization       | An Organization that satisfies Project Adhikaar's verification requirements.                                                 |
 
+# Core Domain Concepts
+
+## Help Request
+
+A Help Request is the Help Seeker's initial request for assistance.
+
+It captures the original situation as submitted and creates exactly one Case. Once submitted, it represents a snapshot of the original request and is not intended to evolve over time.
+
+A Help Request may be submitted by either an authenticated or unauthenticated user. Personally identifying information is optional and is never automatically shared with Organizations.
+
+A Help Request may contain optional contact information. This information remains private to the platform and is not automatically shared with Organizations.
+
+## Case
+
+A Case is the ongoing coordination of assistance created from a Help Request.
+
+Unlike a Help Request, a Case is a living record that evolves as assistance progresses. It is the primary entity used for recommendations, referrals, and tracking the progress of assistance.
+
+## Referral
+
+A Referral is created only after the Help Seeker approves a Recommendation and provides the information required for the selected Organization to establish contact.
+
+It represents the information intentionally shared with a specific Organization for the purpose of requesting assistance.
+
 # Domain Relationships
 
 | Relationship                  | Cardinality                        | Reason                                                                                                                              | Status |
@@ -45,29 +69,31 @@ The following terms have precise meanings within Project Adhikaar.
 
 ## Domain Relationship Diagram
 
+## Domain Relationships
+
 ```mermaid
-graph LR
+erDiagram
 
-Person <-->|has| Role
+    User ||--o{ HelpRequest : submits
+    User }o--|| Organization : represents
+    User }o--o{ Role : assigned
 
-Person <-->|participates in| Case
+    HelpRequest ||--|| Case : creates
 
-HelpRequest -->|creates| Case
+    Case }o--o{ Service : requires
+    Case ||--o{ Recommendation : generates
+    Case ||--o{ Referral : owns
 
-Case -->|generates| Recommendation
+    Recommendation }o--|| Service : for
+    Recommendation o|--|| Referral : results_in
 
-Recommendation -->|suggests| Organization
+    Referral }o--|| Organization : sent_to
 
-Case -->|contains| Referral
-
-Referral -->|sent to| Organization
-
-Organization <-->|offers| Service
-
-Resource -->|supports| Case
-
-Resource -->|explains| Service
+    Organization ||--o{ OrganizationService : provides
+    Service ||--o{ OrganizationService : offered_as
 ```
+
+> _**Note:** This diagram represents conceptual domain relationships rather than database tables. Some many-to-many relationships may be implemented using junction tables in the persistence layer, while others (such as OrganizationService) are themselves first-class domain concepts._
 
 # Workflows & Lifecycles
 
@@ -86,6 +112,7 @@ A[Open Project Adhikaar]
 B[Submit Help Request]
 C[Review Recommendations]
 D[Approve Recommendations]
+Z[Provide contact information if required]
 E[Select Organization if multiple accept]
 F[Receive Assistance]
 G[Update Case if needed]
@@ -154,7 +181,8 @@ P1 --> Q
 %% User Approval
 
 C --> D
-D --> R
+D --> Z
+Z --> R
 
 %% =========================
 %% Referral Process

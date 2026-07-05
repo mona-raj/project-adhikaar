@@ -87,3 +87,46 @@ Monorepo structure with separate backend and frontend directories
 ### Rationale
 
 Keep everything in one place and share necessary code
+
+---
+
+## D008- Help Seeker's information is not shared with the organization until they choose to.
+
+**Status:** Accepted
+
+- The Help Request can store contact information, but it's completely optional and remains private until the user explicitly approves sharing it.
+  Contact information stored on a Help Request is not automatically visible to any organization.
+
+- Help Requests may be submitted by authenticated or unauthenticated users. Authentication is never required to request help. If submitted by an authenticated user, user information is copied into the Help Request as a snapshot rather than referenced for historical consistency.
+
+---
+
+## D009 — Contact Information Before Referral
+
+A Referral cannot be created until the Help Seeker provides at least one contact method to be shared with the selected Organization.
+
+---
+
+## D010 — Persistent Recommendations
+
+Recommendations are persistent, case-scoped entities. They preserve recommendation history and the Help Seeker's decisions, and may later result in Referrals.
+
+---
+
+## D011 — Contact Information Before Referral
+
+The Case owns the confirmed list of required Services. The list is derived from the Help Request through AI analysis and Help Seeker review, and may evolve throughout the Case lifecycle.
+
+---
+
+## D012 - OrganizationService
+
+The relationship between Organizations and Services is modeled as a first-class domain concept because it carries business-specific attributes.
+
+---
+
+## D013 - RBAC
+
+Authenticated capabilities are role-based. Help Seekers are not a dedicated role
+
+---
