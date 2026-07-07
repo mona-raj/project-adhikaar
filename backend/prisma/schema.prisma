@@ -178,7 +178,7 @@ model HelpRequest {
   description String
 
   // Safety
-  safetyStatus SafetyStatus @default(UNKNOWN)
+  declaredSafetyStatus SafetyStatus @default(UNKNOWN)
 
   // Location
   location Json?
@@ -208,6 +208,9 @@ model Case {
 
   // Status
   status CaseStatus @default(NEW)
+
+  evaluatedSafetyStatus SafetyStatus @default(UNKNOWN)
+  evaluatedAt           DateTime?
 
   // Metadata
   createdAt DateTime @default(now())
