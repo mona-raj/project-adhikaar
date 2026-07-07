@@ -10,7 +10,7 @@ if (!env.db_url) {
 }
 
 const adapter = new PrismaBetterSqlite3({
-  url: env.db_url,
+  url: connectionString,
 });
 
 export const prisma = new PrismaClient({
