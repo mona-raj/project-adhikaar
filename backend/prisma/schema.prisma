@@ -11,3 +11,262 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+enum SafetyStatus {
+  SAFE
+  UNSAFE
+  UNKNOWN
+}
+
+enum CaseStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+  CLOSED
+}
+
+enum RecommendationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum ReferralStatus {
+  SENT
+  ACCEPTED
+  DECLINED
+  WITHDRAWN
+  COMPLETED
+}
+
+enum GenderEligibility {
+  ANY
+  WOMEN
+  MEN
+  TRANSGENDER
+  NON_BINARY
+  OTHER
+}
+
+model Service {
+  // Identity
+  id          String  @id @default(cuid())
+  code        String  @unique
+  name        String  @unique
+  description String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organizationServices OrganizationService[]
+  cases                Case[]
+  recommendations      Recommendation[]
+}
+
+model Role {
+  // Identity
+  id          String  @id @default(cuid())
+  name        String  @unique
+  description String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users User[]
+}
+
+model Organization {
+  // Identity
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  // Contact
+  website String?
+  email   String?
+  phone   String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  representatives      User[]
+  organizationServices OrganizationService[]
+}
+
+model User {
+  // Identity
+  id   String  @id @default(cuid())
+  name String?
+
+  // Authentication
+  email        String? @unique
+  phone        String? @unique
+  passwordHash String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  roles Role[]
+
+  helpRequests HelpRequest[]
+}
+
+model OrganizationService {
+  // Identity
+  id String @id @default(cuid())
+
+  // Foreign Keys
+  organizationId String
+  serviceId      String
+
+  // Availability
+  isActive Boolean @default(true)
+
+  // Eligibility
+  eligibility       String?
+  coverageArea      Json?
+  minAge            Int?
+  maxAge            Int?
+  genderEligibility GenderEligibility @default(ANY)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id])
+  service      Service      @relation(fields: [serviceId], references: [id])
+
+  languages       Language[]
+  recommendations Recommendation[]
+
+  @@unique([organizationId, serviceId])
+}
+
+model Language {
+  // Identity
+  id   String @id @default(cuid())
+  code String @unique
+  name String @unique
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organizationServices OrganizationService[]
+  helpRequests         HelpRequest[]
+}
+
+model HelpRequest {
+  // Identity
+  id String @id @default(cuid())
+
+  // Request
+  description String
+
+  // Safety
+  safetyStatus SafetyStatus @default(UNKNOWN)
+
+  // Location
+  location Json?
+
+  // Optional Contact Information
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  preferredLanguageId String?
+  preferredLanguage   Language? @relation(fields: [preferredLanguageId], references: [id])
+
+  case Case?
+}
+
+model Case {
+  // Identity
+  id String @id @default(cuid())
+
+  // Status
+  status CaseStatus @default(NEW)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  helpRequestId String      @unique
+  helpRequest   HelpRequest @relation(fields: [helpRequestId], references: [id])
+
+  services Service[]
+
+  recommendations Recommendation[]
+}
+
+model Recommendation {
+  // Identity
+  id String @id @default(cuid())
+
+  // Recommendation Details
+  score  Float?
+  reason String?
+
+  status RecommendationStatus @default(PENDING)
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  caseId String
+  case   Case   @relation(fields: [caseId], references: [id])
+
+  organizationServiceId String
+  organizationService   OrganizationService @relation(fields: [organizationServiceId], references: [id])
+
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  referral Referral?
+
+  // Indices
+  @@index([caseId, status])
+}
+
+model Referral {
+  // Identity
+  id String @id @default(cuid())
+
+  // Status
+  status ReferralStatus @default(SENT)
+
+  // Snapshot of shared information
+  sharedData Json
+
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  recommendationId String         @unique
+  recommendation   Recommendation @relation(fields: [recommendationId], references: [id])
+}
