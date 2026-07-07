@@ -113,7 +113,7 @@ Recommendations are persistent, case-scoped entities. They preserve recommendati
 
 ---
 
-## D011 — Contact Information Before Referral
+## D011 — Case-owned Services
 
 The Case owns the confirmed list of required Services. The list is derived from the Help Request through AI analysis and Help Seeker review, and may evolve throughout the Case lifecycle.
 
@@ -128,5 +128,28 @@ The relationship between Organizations and Services is modeled as a first-class 
 ## D013 - RBAC
 
 Authenticated capabilities are role-based. Help Seekers are not a dedicated role
+
+---
+
+## D014 - Contact information belongs to HelpRequest
+
+Contact information is stored on the HelpRequest rather than the User because each request independently controls what information the help seeker chooses to provide.
+
+---
+
+## D015 - Referral stores a snapshot
+
+Referrals contain an immutable snapshot of the information explicitly shared with an organization. Subsequent changes to the HelpRequest or User do not modify previously created referrals.
+
+---
+## D016 - Coverage Area
+
+OrganizationService stores geographical coverage as structured JSON rather than a normalized geographical hierarchy. This provides flexibility while avoiding unnecessary complexity during the MVP.
+
+---
+
+## D017 - Language Catalog
+
+Languages are represented as a platform-managed catalog to ensure consistency, simplify matching, and support future localization.
 
 ---
