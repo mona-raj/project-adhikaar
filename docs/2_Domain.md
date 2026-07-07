@@ -32,11 +32,11 @@ The following terms have precise meanings within Project Adhikaar.
 
 ## Help Request
 
-HelpRequest represents the initial request for assistance submitted by a help seeker. It captures the original description, safety status, location, optional contact information, and optional preferred language. A HelpRequest may be anonymous (userId is nullable) and may later become exactly one Case.
+HelpRequest represents the initial request for assistance submitted by a help seeker. It captures the original description, declared safety status, location, optional contact information, and optional preferred language. A HelpRequest may be anonymous (userId is nullable) and may later become exactly one Case.
 
 ## Case
 
-Case is the platform's working representation of a HelpRequest. It owns the confirmed required services, tracks the overall case lifecycle, and is the parent of Recommendations and Referrals.
+Case is the platform's working representation of a HelpRequest. It owns the confirmed required services and the evaluated safety status, tracks the overall case lifecycle, and is the parent of Recommendations and Referrals.
 
 Unlike a Help Request, a Case is a living record that evolves as assistance progresses. It is the primary entity used for recommendations, referrals, and tracking the progress of assistance.
 

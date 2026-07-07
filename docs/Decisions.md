@@ -153,3 +153,9 @@ OrganizationService stores geographical coverage as structured JSON rather than 
 Languages are represented as a platform-managed catalog to ensure consistency, simplify matching, and support future localization.
 
 ---
+
+## D018 -  Platform-derived information belongs to Case, not HelpRequest
+
+HelpRequest preserves the user's original submission, while Case stores the platform's evolving understanding and management of that request. This applies to inferred services, evaluated safety, recommendations, and future automated or human assessments.
+
+---
