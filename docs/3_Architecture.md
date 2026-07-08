@@ -48,3 +48,16 @@ Provides implementations for persistence and external integrations. Prisma is us
 ## Persistence
 
 The database schema is implemented using Prisma ORM. Catalog entities such as `Role`, `Service`, and `Language` are managed by the platform and seeded during application setup.
+
+## File Naming Conventions
+
+| Layer      | Export Type      | File Naming        | Example                       |
+| ---------- | ---------------- | ------------------ | ----------------------------- |
+| Repository | Class            | PascalCase         | `HelpRequestRepository.ts`    |
+| Service    | Class            | PascalCase         | `CreateHelpRequestService.ts` |
+| Controller | Class            | PascalCase         | `HelpRequestController.ts`    |
+| Middleware | Function         | camelCase + suffix | `validate.middleware.ts`      |
+| Validation | Schema/Object    | camelCase          | `helpRequest.ts`              |
+| Routes     | Router           | camelCase          | `helpRequest.routes.ts`       |
+| Utils      | Functions        | camelCase          | `date.ts`                     |
+| Types      | Types/Interfaces | camelCase          | `helpRequest.ts`              |
