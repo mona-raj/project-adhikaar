@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "../generated/prisma/client";
 import { CreateHelpRequestInput } from "../validation/helpRequest.schema";
 
 export class HelpRequestRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient | Prisma.TransactionClient) {}
 
   async create(data: CreateHelpRequestInput) {
     const { preferredLanguageCode, ...helpRequestData } = data;
