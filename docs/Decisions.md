@@ -159,3 +159,17 @@ Languages are represented as a platform-managed catalog to ensure consistency, s
 HelpRequest preserves the user's original submission, while Case stores the platform's evolving understanding and management of that request. This applies to inferred services, evaluated safety, recommendations, and future automated or human assessments.
 
 ---
+
+## D019 - Confirmed Services are User-editable
+
+**Status:** Accepted
+
+Services inferred from a Help Request are initially rule-based or AI-assisted suggestion rather than a final decision. The Help Seeker may review, add, or remove required Services before recommendations are generated.
+
+### Rationale
+
+- Rules or AI inference are intended to assist rather than replace user judgment.
+- Help Seekers understand their needs better than automated analysis.
+- Recommendations should be generated from the confirmed list of required Services rather than the initial inferred list.
+
+---

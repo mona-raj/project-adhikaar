@@ -33,6 +33,8 @@ Project Adhikaar follows a layered architecture that separates business rules fr
 
 Receives requests, validates input, invokes application services, and returns responses. It should contain no business logic.
 
+Request validation is performed using Zod schemas. Public API responses are returned through endpoint-specific response contracts to avoid exposing persistence models directly.
+
 ### Application Layer
 
 Implements the platform's use cases by coordinating domain entities and repositories. Examples include creating Help Requests, generating Recommendations, and creating Referrals.
