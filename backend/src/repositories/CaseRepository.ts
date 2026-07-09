@@ -47,4 +47,17 @@ export class CaseRepository {
       },
     });
   }
+
+  async replaceServices(caseId: string, serviceIds: string[]) {
+    return this.prisma.case.update({
+      where: {
+        id: caseId,
+      },
+      data: {
+        services: {
+          set: serviceIds.map((id) => ({ id })),
+        },
+      },
+    });
+  }
 }
