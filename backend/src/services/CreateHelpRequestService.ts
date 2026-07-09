@@ -6,13 +6,17 @@ import { CaseRepository } from "../repositories/CaseRepository";
 import { CreateHelpRequestInput } from "../validation/helpRequest.schema";
 import { ProcessCaseService } from "./ProcessCaseService";
 
+import { CreateHelpRequestResponse } from "../contracts/helpRequest/createHelpRequest.contract";
+
 export class CreateHelpRequestService {
   constructor(
     private readonly prisma: PrismaClient,
     private readonly processCaseService: ProcessCaseService,
   ) {}
 
-  async execute(data: CreateHelpRequestInput) {
+  async execute(
+    data: CreateHelpRequestInput,
+  ): Promise<CreateHelpRequestResponse> {
     const result = await this.prisma.$transaction(async (tx) => {
       const helpRequestRepository = new HelpRequestRepository(tx);
       const caseRepository = new CaseRepository(tx);

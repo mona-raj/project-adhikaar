@@ -37,6 +37,22 @@ export class CaseRepository {
     });
   }
 
+  async findByIdWithDetails(id: string) {
+    return this.prisma.case.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        helpRequest: true,
+        services: {
+          orderBy: {
+            name: "asc",
+          },
+        },
+      },
+    });
+  }
+
   async updateEvaluatedSafetyStatus(id: string, status: SafetyStatus) {
     return this.prisma.case.update({
       where: {
@@ -44,6 +60,7 @@ export class CaseRepository {
       },
       data: {
         evaluatedSafetyStatus: status,
+        evaluatedAt: new Date(),
       },
     });
   }
@@ -55,7 +72,8 @@ export class CaseRepository {
       },
       data: {
         services: {
-          set: serviceIds.map((id) => ({ id })),
+          set: [],
+          connect: serviceIds.map((id) => ({ id })),
         },
       },
     });

@@ -20,4 +20,22 @@ export class ServiceRepository {
       },
     });
   }
+
+  async findAll() {
+    return this.prisma.service.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    });
+  }
+
+  async findManyByIds(ids: string[]) {
+    return this.prisma.service.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
 }
