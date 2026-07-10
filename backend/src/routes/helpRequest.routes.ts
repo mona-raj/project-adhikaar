@@ -24,6 +24,12 @@ import { ServiceInferenceService } from "../services/ServiceInferenceService";
 
 import { ServiceInferenceEngine } from "../domain/inference/ServiceInferenceEngine";
 
+import { RecommendationService } from "../services/RecommendationService";
+
+import { RecommendationEngine } from "../domain/recommendation/RecommendationEngine";
+
+import { OrganizationServiceRepository } from "../repositories/OrganizationServiceRepository";
+
 const router = Router();
 
 const caseRepository = new CaseRepository(prisma);
@@ -40,9 +46,21 @@ const serviceInferenceService = new ServiceInferenceService(
   serviceInferenceEngine,
 );
 
+const organizationServiceRepository = new OrganizationServiceRepository(prisma);
+
+const recommendationEngine = new RecommendationEngine();
+
+const recommendationService = new RecommendationService(
+  prisma,
+  caseRepository,
+  organizationServiceRepository,
+  recommendationEngine,
+);
+
 const processCaseService = new ProcessCaseService(
   safetyEvaluationService,
   serviceInferenceService,
+  recommendationService,
 );
 
 const createHelpRequestService = new CreateHelpRequestService(

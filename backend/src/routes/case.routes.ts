@@ -20,6 +20,12 @@ import { UpdateCaseServicesService } from "../services/UpdateCaseServicesService
 
 import { UpdateCaseServicesController } from "../controllers/UpdateCaseServicesController";
 
+import { RecommendationEngine } from "../domain/recommendation/RecommendationEngine";
+
+import { RecommendationService } from "../services/RecommendationService";
+
+import {OrganizationServiceRepository} from "../repositories/OrganizationServiceRepository"
+
 const router = Router();
 
 const caseRepository = new CaseRepository(prisma);
@@ -30,9 +36,21 @@ const getCaseService = new GetCaseService(caseRepository);
 
 const controller = new GetCaseController(getCaseService);
 
+const organizationServiceRepository  = new OrganizationServiceRepository(prisma);
+
+const recommendationEngine = new RecommendationEngine();
+
+const recommendationService = new RecommendationService(
+  prisma,
+  caseRepository,
+  organizationServiceRepository,
+  recommendationEngine,
+);
+
 const updateCaseServicesService = new UpdateCaseServicesService(
   caseRepository,
   serviceRepository,
+  recommendationService,
 );
 
 const updateCaseServicesController = new UpdateCaseServicesController(

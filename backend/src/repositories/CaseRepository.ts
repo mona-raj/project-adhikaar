@@ -26,27 +26,33 @@ export class CaseRepository {
     });
   }
 
-  async findByIdWithHelpRequest(id: string) {
+  async findByIdWithRelations(id: string) {
     return this.prisma.case.findUnique({
       where: {
         id,
       },
       include: {
-        helpRequest: true,
-      },
-    });
-  }
-
-  async findByIdWithDetails(id: string) {
-    return this.prisma.case.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        helpRequest: true,
+        helpRequest: {
+          include: {
+            preferredLanguage: true,
+          },
+        },
         services: {
           orderBy: {
             name: "asc",
+          },
+        },
+        recommendations: {
+          orderBy: {
+            score: "desc",
+          },
+          include: {
+            service: true,
+            organizationService: {
+              include: {
+                organization: true,
+              },
+            },
           },
         },
       },
@@ -65,7 +71,7 @@ export class CaseRepository {
     });
   }
 
-  async replaceServices(caseId: string, serviceIds: string[]) {
+  async updateServices(caseId: string, serviceIds: string[]) {
     return this.prisma.case.update({
       where: {
         id: caseId,

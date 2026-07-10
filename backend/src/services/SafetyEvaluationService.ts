@@ -7,7 +7,7 @@ export class SafetyEvaluationService {
 
   async evaluate(caseId: string): Promise<SafetyStatus> {
     const caseEntity =
-      await this.caseRepository.findByIdWithHelpRequest(caseId);
+      await this.caseRepository.findByIdWithRelations(caseId);
 
     if (!caseEntity) {
       throw new NotFoundError("Case not found.");

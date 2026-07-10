@@ -6,11 +6,13 @@ import { ServiceRepository } from "../repositories/ServiceRepository";
 import { UpdateCaseServicesInput } from "../validation/updateCaseServices.schema";
 
 import { UpdateCaseServicesResponse } from "../contracts/service/updateCaseServices.contract";
+import { RecommendationService } from "./RecommendationService";
 
 export class UpdateCaseServicesService {
   constructor(
     private readonly caseRepository: CaseRepository,
     private readonly serviceRepository: ServiceRepository,
+    private readonly recommendationService: RecommendationService,
   ) {}
 
   async execute(
@@ -31,7 +33,9 @@ export class UpdateCaseServicesService {
       throw new NotFoundError("One or more services were not found.");
     }
 
-    await this.caseRepository.replaceServices(caseId, input.serviceIds);
+    await this.caseRepository.updateServices(caseId, input.serviceIds);
+
+    await this.recommendationService.regenerate(caseId);
 
     return {
       caseId,

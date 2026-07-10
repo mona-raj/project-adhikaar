@@ -14,7 +14,7 @@ export class ServiceInferenceService {
 
   async infer(caseId: string): Promise<void> {
     const caseEntity =
-      await this.caseRepository.findByIdWithHelpRequest(caseId);
+      await this.caseRepository.findByIdWithRelations(caseId);
 
     if (!caseEntity) {
       throw new NotFoundError("Case not found.");
@@ -29,6 +29,6 @@ export class ServiceInferenceService {
 
     const serviceIds = services.map((service) => service.id);
 
-    await this.caseRepository.replaceServices(caseId, serviceIds);
+    await this.caseRepository.updateServices(caseId, serviceIds);
   }
 }
