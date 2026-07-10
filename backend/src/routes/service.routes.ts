@@ -9,7 +9,6 @@ import { GetServicesController } from "../controllers/GetServicesController";
 import { GetServicesService } from "../services/GetServicesService";
 
 import { ServiceRepository } from "../repositories/ServiceRepository";
-import { util } from "zod";
 
 const router = Router();
 

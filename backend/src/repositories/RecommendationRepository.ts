@@ -26,6 +26,35 @@ export class RecommendationRepository {
     });
   }
 
+  async findByIdWithRelations(id: string) {
+    return this.prisma.recommendation.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        service: true,
+
+        case: {
+          include: {
+            helpRequest: {
+              include: {
+                preferredLanguage: true,
+              },
+            },
+          },
+        },
+
+        organizationService: {
+          include: {
+            organization: true,
+          },
+        },
+
+        referral: true,
+      },
+    });
+  }
+
   async deletePendingByCaseId(caseId: string) {
     return this.prisma.recommendation.deleteMany({
       where: {
@@ -44,6 +73,17 @@ export class RecommendationRepository {
         score: candidate.score,
         reason: candidate.reason,
       })),
+    });
+  }
+
+  async updateStatus(id: string, status: RecommendationStatus) {
+    return this.prisma.recommendation.update({
+      where: {
+        id,
+      },
+      data: {
+        status,
+      },
     });
   }
 }

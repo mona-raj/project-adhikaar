@@ -223,6 +223,8 @@ model Case {
   services Service[]
 
   recommendations Recommendation[]
+
+  referrals Referral[]
 }
 
 model Recommendation {
@@ -272,4 +274,7 @@ model Referral {
   // Relations
   recommendationId String         @unique
   recommendation   Recommendation @relation(fields: [recommendationId], references: [id])
+
+  caseId String
+  case   Case   @relation(fields: [caseId], references: [id])
 }
