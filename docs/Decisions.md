@@ -173,3 +173,29 @@ Services inferred from a Help Request are initially rule-based or AI-assisted su
 - Recommendations should be generated from the confirmed list of required Services rather than the initial inferred list.
 
 ---
+
+## D020 - Recommendation regeneration
+
+Recommendations are regenerated whenever Case services change.
+
+Only pending recommendations are deleted and regenerated.
+
+Approved recommendations remain unchanged.
+
+---
+
+## D021 - Referral creation transaction
+
+Referral creation and Recommendation approval occur in a single transaction.
+
+This prevents inconsistent states where a Recommendation is approved without a Referral or vice versa.
+
+---
+
+## D022 - AI abstraction
+
+Safety Evaluation and Service Identification currently use rule-based implementations.
+
+Both are intentionally isolated behind service abstractions so they can later be replaced with AI implementations without changing the API or workflow.
+
+---

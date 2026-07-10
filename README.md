@@ -6,7 +6,7 @@ Project Adhikaar is an open-source platform that helps vulnerable individuals sa
 
 ## Project Status
 
-🚧 **Current Phase:** Product & Domain Design
+🚧 **Current Phase:** Backend development and API design
 
 
 ## Documentation

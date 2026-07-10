@@ -43,3 +43,25 @@ Possible factors:
 ## Q005 - How should emergency requests be prioritized?
 
 Needs further discussion.
+
+---
+
+## Q006 - Should Recommendations expire automatically?
+
+Possible options:
+
+- Never
+- After 24 hours
+- After Organization availability changes
+
+---
+
+## Q007 - Should Organizations be able to update Referral status directly?
+
+Possible statuses:
+
+- ACCEPTED
+- DECLINED
+- COMPLETED
+
+---
