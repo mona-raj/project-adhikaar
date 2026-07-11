@@ -15,3 +15,7 @@ This directory contains the product vision, domain knowledge, architectural deci
 4. [Decisions.md](./Decisions.md) → Records important design decisions and why they were made.
 
 5. [Questions.md](./Questions.md) → Tracks unresolved design questions.
+
+## Generated Documentation
+
+- [Entity Relationship Diagram](./er-diagram.svg)
