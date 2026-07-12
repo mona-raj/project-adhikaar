@@ -8,66 +8,48 @@ Project Adhikaar is an open-source platform that helps vulnerable individuals sa
 
 🚧 **Current Phase:** Backend development and API design
 
-## Documentation
-
-All project documentation can be found in the `/docs` directory.
-
-**Start here:** [docs/README.md](./docs/README.md)
-
 ## Getting Started
 
 ### Prerequisites
 
-Before running the project, make sure you have the following installed:
+Before running the project, ensure you have the following installed:
 
+- Git
 - Node.js (v22 or later recommended)
 - npm
-- Git
 
 ### Installation
 
-Clone the repository:
+Clone the repository and move into the backend project:
 
 ```bash
 git clone https://github.com/mona-raj/project-adhikaar.git
+
+cd project-adhikaar/backend
 ```
 
-Move into the project directory:
+Install the project dependencies:
 
 ```bash
-cd project-adhikaar
-```
-
-Install backend dependencies:
-
-```bash
-cd backend
 npm install
 ```
 
-### Database Setup
-
-Generate the Prisma Client and the Entity Relationship (ER) diagram:
+Initialize the development database:
 
 ```bash
-npx prisma generate
+npm run db:setup
 ```
 
-Apply the database schema:
+This command automatically:
 
-```bash
-npx prisma migrate dev
-```
-
-If seed data is available:
-
-```bash
-npm run seed
-```
+- Applies all existing Prisma migrations
+- Generates the Prisma Client
+- Generates the Entity Relationship (ER) diagram
+- Seeds the database with development data
 
 ### Running the Project
 
-Create a `.env` file inside the `backend` directory (if required).
+If required, create a `.env` file in the `backend` directory.
 
 Start the development server:
 
@@ -75,42 +57,39 @@ Start the development server:
 npm run dev
 ```
 
-The backend will start on:
+The backend will be available at:
 
 ```text
 http://localhost:3000
 ```
 
-Once the server is running:
+## Development Commands
 
-- **API Documentation (Swagger):** [http://localhost:3000/docs](http://localhost:3000/docs)
-- **Health Check:** [http://localhost:3000/api/v1/health](http://localhost:3000/api/v1/health)
+| Command                    | Description                        |
+| -------------------------- | ---------------------------------- |
+| `npm run dev`              | Start the development server       |
+| `npm run build`            | Build the project                  |
+| `npm run test`             | Run all tests                      |
+| `npm run test:watch`       | Run tests in watch mode            |
+| `npm run test:coverage`    | Generate the test coverage report  |
+| `npm run db:migrate`       | Apply pending database migrations  |
+| `npm run db:seed`          | Seed the database                  |
+| `npm run db:studio`        | Open Prisma Studio                 |
+| `npm run generate:openapi` | Generate the OpenAPI specification |
 
-## API Documentation
+## Documentation
 
-An interactive OpenAPI (Swagger) documentation is generated directly from the Zod validation schemas and response contracts.
+| Resource                        | Location                                     |
+| ------------------------------- | -------------------------------------------- |
+| Swagger UI                      | http://localhost:3000/docs                   |
+| OpenAPI Specification           | http://localhost:3000/openapi.json           |
+| Versioned OpenAPI Specification | [docs/openapi.json](./docs/openapi.json)     |
+| Entity Relationship Diagram     | [docs/er-diagram.svg](./docs/er-diagram.svg) |
+| Project Documentation           | [`docs/`](./docs/README.md)                            |
 
-After starting the backend, open:
+The OpenAPI specification is generated directly from the Zod validation schemas and response contracts, ensuring that the API documentation stays synchronized with the implementation.
 
-```text
-http://localhost:3000/docs
-```
-
-The documentation is automatically synchronized with the application's request validation and response contracts, ensuring the API specification stays consistent with the implementation.
-
-## Database Schema
-
-The Entity Relationship (ER) diagram is generated automatically from the Prisma schema.
-
-**Location:** [docs/er-diagram.svg](./docs/er-diagram.svg)
-
-To regenerate the diagram after modifying the Prisma schema:
-
-```bash
-npx prisma generate
-```
-
-The ER diagram is generated using `prisma-erd-generator` during Prisma Client generation.
+The Entity Relationship (ER) diagram is generated automatically from the Prisma schema during Prisma Client generation.
 
 ## Repository Structure
 

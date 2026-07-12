@@ -5,9 +5,10 @@
 **Table of Contents**
 
 1. [Glossary](#glossary)
-2. [Domain Relationships](#domain-relationships)
-3. [Workflows & Lifecycles](#workflows--lifecycles)
-4. [Business Rules](#business-rules)
+2. [Core Domain Concepts](#core-domain-concepts)
+3. [Domain Relationships](#domain-relationships)
+4. [Workflows & Lifecycles](#workflows--lifecycles)
+5. [Business Rules](#business-rules)
 
 # Glossary
 

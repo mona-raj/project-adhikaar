@@ -1,0 +1,1346 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Project Adhikaar API",
+    "version": "1.0.0",
+    "description": "REST API for Project Adhikaar - connecting people in need with support organizations."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "message"
+        ]
+      },
+      "CreateHelpRequest": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 5000
+          },
+          "declaredSafetyStatus": {
+            "type": "string",
+            "enum": [
+              "SAFE",
+              "UNSAFE",
+              "UNKNOWN"
+            ]
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "minimum": -90,
+                "maximum": 90
+              },
+              "longitude": {
+                "type": "number",
+                "minimum": -180,
+                "maximum": 180
+              }
+            },
+            "required": [
+              "latitude",
+              "longitude"
+            ]
+          },
+          "contactName": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "contactPhone": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 20
+          },
+          "preferredLanguageCode": {
+            "type": "string",
+            "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+          }
+        },
+        "required": [
+          "description"
+        ]
+      },
+      "CreateHelpRequestResponse": {
+        "type": "object",
+        "properties": {
+          "helpRequestId": {
+            "type": "string"
+          },
+          "caseId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CLOSED"
+            ]
+          }
+        },
+        "required": [
+          "helpRequestId",
+          "caseId",
+          "status"
+        ]
+      },
+      "GetCaseResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CLOSED"
+            ]
+          },
+          "evaluatedSafetyStatus": {
+            "type": "string",
+            "enum": [
+              "SAFE",
+              "UNSAFE",
+              "UNKNOWN"
+            ]
+          },
+          "helpRequest": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "declaredSafetyStatus": {
+                "type": "string",
+                "enum": [
+                  "SAFE",
+                  "UNSAFE",
+                  "UNKNOWN"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "description",
+              "declaredSafetyStatus"
+            ]
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "code",
+                "name"
+              ]
+            }
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "PENDING",
+                    "APPROVED",
+                    "REJECTED",
+                    "EXPIRED"
+                  ]
+                },
+                "score": {
+                  "type": "number",
+                  "nullable": true
+                },
+                "reason": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "service": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "code",
+                    "name"
+                  ]
+                },
+                "organization": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "email": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "website",
+                    "email",
+                    "phone"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "status",
+                "score",
+                "reason",
+                "service",
+                "organization"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "evaluatedSafetyStatus",
+          "helpRequest",
+          "services",
+          "recommendations"
+        ]
+      },
+      "UpdateCaseServices": {
+        "type": "object",
+        "properties": {
+          "serviceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "serviceIds"
+        ]
+      },
+      "UpdateCaseServicesResponse": {
+        "type": "object",
+        "properties": {
+          "caseId": {
+            "type": "string"
+          },
+          "serviceCount": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "caseId",
+          "serviceCount"
+        ]
+      },
+      "GetServicesResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          "required": [
+            "id",
+            "code",
+            "name",
+            "description"
+          ]
+        }
+      },
+      "CreateReferral": {
+        "type": "object",
+        "properties": {
+          "contactName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "phone": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "contactName"
+        ]
+      },
+      "CreateReferralResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SENT",
+              "ACCEPTED",
+              "DECLINED",
+              "WITHDRAWN",
+              "COMPLETED"
+            ]
+          },
+          "recommendationId": {
+            "type": "string"
+          },
+          "caseId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "recommendationId",
+          "caseId",
+          "createdAt"
+        ]
+      },
+      "GetReferralResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SENT",
+              "ACCEPTED",
+              "DECLINED",
+              "WITHDRAWN",
+              "COMPLETED"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recommendation": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "APPROVED",
+                  "REJECTED",
+                  "EXPIRED"
+                ]
+              },
+              "score": {
+                "type": "number",
+                "nullable": true
+              },
+              "reason": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "score",
+              "reason"
+            ]
+          },
+          "service": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "code",
+              "name"
+            ]
+          },
+          "organization": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "website": {
+                "type": "string",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "nullable": true
+              },
+              "phone": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "website",
+              "email",
+              "phone"
+            ]
+          },
+          "sharedData": {
+            "type": "object",
+            "properties": {
+              "contact": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "phone": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "phone"
+                ]
+              },
+              "helpRequest": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "description"
+                ]
+              },
+              "preferredLanguage": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code",
+                  "name"
+                ]
+              },
+              "service": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "code",
+                  "name"
+                ]
+              }
+            },
+            "required": [
+              "contact",
+              "helpRequest",
+              "preferredLanguage",
+              "service"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "createdAt",
+          "recommendation",
+          "service",
+          "organization",
+          "sharedData"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/help-requests": {
+      "post": {
+        "tags": [
+          "Help Requests"
+        ],
+        "operationId": "createHelpRequest",
+        "summary": "Create a new help request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 5000
+                  },
+                  "declaredSafetyStatus": {
+                    "type": "string",
+                    "enum": [
+                      "SAFE",
+                      "UNSAFE",
+                      "UNKNOWN"
+                    ]
+                  },
+                  "location": {
+                    "type": "object",
+                    "properties": {
+                      "latitude": {
+                        "type": "number",
+                        "minimum": -90,
+                        "maximum": 90
+                      },
+                      "longitude": {
+                        "type": "number",
+                        "minimum": -180,
+                        "maximum": 180
+                      }
+                    },
+                    "required": [
+                      "latitude",
+                      "longitude"
+                    ]
+                  },
+                  "contactName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 100
+                  },
+                  "contactEmail": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "contactPhone": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 20
+                  },
+                  "preferredLanguageCode": {
+                    "type": "string",
+                    "pattern": "^[a-z]{2}(-[A-Z]{2})?$"
+                  }
+                },
+                "required": [
+                  "description"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Help request created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "helpRequestId": {
+                      "type": "string"
+                    },
+                    "caseId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "NEW",
+                        "IN_PROGRESS",
+                        "COMPLETED",
+                        "CLOSED"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "helpRequestId",
+                    "caseId",
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/cases/{id}": {
+      "get": {
+        "tags": [
+          "Cases"
+        ],
+        "operationId": "getCase",
+        "summary": "Get a case",
+        "description": "Retrieves a case together with inferred services and generated recommendations.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Case retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "NEW",
+                        "IN_PROGRESS",
+                        "COMPLETED",
+                        "CLOSED"
+                      ]
+                    },
+                    "evaluatedSafetyStatus": {
+                      "type": "string",
+                      "enum": [
+                        "SAFE",
+                        "UNSAFE",
+                        "UNKNOWN"
+                      ]
+                    },
+                    "helpRequest": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "declaredSafetyStatus": {
+                          "type": "string",
+                          "enum": [
+                            "SAFE",
+                            "UNSAFE",
+                            "UNKNOWN"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "description",
+                        "declaredSafetyStatus"
+                      ]
+                    },
+                    "services": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "name"
+                        ]
+                      }
+                    },
+                    "recommendations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "APPROVED",
+                              "REJECTED",
+                              "EXPIRED"
+                            ]
+                          },
+                          "score": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "reason": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "service": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "code",
+                              "name"
+                            ]
+                          },
+                          "organization": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "website": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "email": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "phone": {
+                                "type": "string",
+                                "nullable": true
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "website",
+                              "email",
+                              "phone"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "status",
+                          "score",
+                          "reason",
+                          "service",
+                          "organization"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "evaluatedSafetyStatus",
+                    "helpRequest",
+                    "services",
+                    "recommendations"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Case not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/cases/{id}/services": {
+      "put": {
+        "tags": [
+          "Cases"
+        ],
+        "operationId": "updateCaseServices",
+        "summary": "Update selected services",
+        "description": "Updates the approved services for a case and regenerates recommendations.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "serviceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "serviceIds"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Case services updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "caseId": {
+                      "type": "string"
+                    },
+                    "serviceCount": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "caseId",
+                    "serviceCount"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Case or service not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/services": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "operationId": "getServices",
+        "summary": "Get available services",
+        "description": "Retrieves all available support services.",
+        "responses": {
+          "200": {
+            "description": "Services retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "code",
+                      "name",
+                      "description"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/recommendations/{id}/referral": {
+      "post": {
+        "tags": [
+          "Recommendations"
+        ],
+        "operationId": "createReferral",
+        "summary": "Create a referral",
+        "description": "Creates a referral from an approved recommendation and shares the required information with the selected organization.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contactName": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "contactName"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Referral created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "SENT",
+                        "ACCEPTED",
+                        "DECLINED",
+                        "WITHDRAWN",
+                        "COMPLETED"
+                      ]
+                    },
+                    "recommendationId": {
+                      "type": "string"
+                    },
+                    "caseId": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "recommendationId",
+                    "caseId",
+                    "createdAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "404": {
+            "description": "Recommendation not found."
+          },
+          "409": {
+            "description": "Referral already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/referrals/{id}": {
+      "get": {
+        "tags": [
+          "Referrals"
+        ],
+        "operationId": "getReferral",
+        "summary": "Get a referral",
+        "description": "Retrieves a referral together with the shared information and associated recommendation.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Referral retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "SENT",
+                        "ACCEPTED",
+                        "DECLINED",
+                        "WITHDRAWN",
+                        "COMPLETED"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "recommendation": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED",
+                            "EXPIRED"
+                          ]
+                        },
+                        "score": {
+                          "type": "number",
+                          "nullable": true
+                        },
+                        "reason": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "status",
+                        "score",
+                        "reason"
+                      ]
+                    },
+                    "service": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "code",
+                        "name"
+                      ]
+                    },
+                    "organization": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "website": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "email": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "phone": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "website",
+                        "email",
+                        "phone"
+                      ]
+                    },
+                    "sharedData": {
+                      "type": "object",
+                      "properties": {
+                        "contact": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string",
+                              "nullable": true
+                            },
+                            "phone": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "email",
+                            "phone"
+                          ]
+                        },
+                        "helpRequest": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "description"
+                          ]
+                        },
+                        "preferredLanguage": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "name"
+                          ]
+                        },
+                        "service": {
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "name"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "contact",
+                        "helpRequest",
+                        "preferredLanguage",
+                        "service"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "createdAt",
+                    "recommendation",
+                    "service",
+                    "organization",
+                    "sharedData"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Referral not found."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    }
+  }
+}

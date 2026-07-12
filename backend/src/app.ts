@@ -10,7 +10,7 @@ import swaggerUi from "swagger-ui-express";
 
 import { openApiDocument } from "./openapi/document";
 
-import {logger } from "./utils/logger"
+import { logger } from "./utils/logger";
 
 import routes from "./routes";
 
@@ -29,8 +29,11 @@ app.use(
 app.use(cors());
 app.use(express.json());
 
-// Swagger
+// Swagger + OpenAPI
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
+app.get("/openapi.json", (_req, res) => {
+  res.json(openApiDocument);
+});
 
 // Routes
 app.use("/api/v1", routes);

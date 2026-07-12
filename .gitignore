@@ -51,6 +51,7 @@ coverage/
 # ===========================
 *.sqlite
 *.sqlite3
+backend/dev.db
 
 # Prisma migrations are source code
 # so DON'T ignore prisma/

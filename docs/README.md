@@ -19,3 +19,5 @@ This directory contains the product vision, domain knowledge, architectural deci
 ## Generated Documentation
 
 - [Entity Relationship Diagram](./er-diagram.svg)
+
+- [OpenAPI Specification](./openapi.json)
