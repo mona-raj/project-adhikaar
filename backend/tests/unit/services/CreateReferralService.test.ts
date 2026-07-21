@@ -1,160 +1,279 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { GetCaseService } from "../../../src/services/GetCaseService";
+import { CreateReferralService } from "../../../src/services/CreateReferralService";
 
-import { CaseRepository } from "../../../src/repositories/CaseRepository";
+import { RecommendationRepository } from "../../../src/repositories/RecommendationRepository";
+import { ReferralRepository } from "../../../src/repositories/ReferralRepository";
 
-import { NotFoundError } from "../../../src/errors/NotFoundError";
+import { ReferralSharedDataBuilder } from "../../../src/domain/referral/ReferralSharedDataBuilder";
 
 import {
-  CaseStatus,
   RecommendationStatus,
-  SafetyStatus,
+  ReferralStatus,
 } from "../../../src/generated/prisma/enums";
 
-describe("GetCaseService", () => {
-  let caseRepository: {
-    findByIdWithRelations: ReturnType<typeof vi.fn>;
+import { NotFoundError } from "../../../src/errors/NotFoundError";
+import { ConflictError } from "../../../src/errors/ConflictError";
+
+describe("CreateReferralService", () => {
+  let prisma = {
+    $transaction: vi.fn(),
   };
 
-  let service: GetCaseService;
+  let recommendationRepository = {
+    findByIdWithRelations: vi.fn(),
+  };
+
+  let service: CreateReferralService;
+
+  let createReferralSpy: ReturnType<typeof vi.spyOn>;
+  let updateStatusSpy: ReturnType<typeof vi.spyOn>;
+  let buildSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    caseRepository = {
-      findByIdWithRelations: vi.fn(),
-    };
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
 
-    service = new GetCaseService(caseRepository as unknown as CaseRepository);
+    createReferralSpy = vi.spyOn(ReferralRepository.prototype, "create");
+
+    updateStatusSpy = vi.spyOn(
+      RecommendationRepository.prototype,
+      "updateStatus",
+    );
+
+    buildSpy = vi.spyOn(ReferralSharedDataBuilder, "build");
+
+    service = new CreateReferralService(
+      prisma as any,
+      recommendationRepository as unknown as RecommendationRepository,
+    );
+
+    prisma.$transaction.mockImplementation(async (callback) => {
+      return callback({} as any);
+    });
   });
 
-  it("maps the case aggregate into the response", async () => {
-    // Arrange
-    const caseId = "case-123";
+  const input = {
+    contactName: "John Doe",
+    email: "john@example.com",
+    phone: "9876543210",
+  };
 
-    caseRepository.findByIdWithRelations.mockResolvedValue({
-      id: caseId,
+  const recommendation = {
+    id: "recommendation-1",
 
-      status: CaseStatus.NEW,
+    referral: null,
 
-      evaluatedSafetyStatus: SafetyStatus.UNKNOWN,
+    case: {
+      id: "case-1",
 
       helpRequest: {
-        id: "help-request-1",
-        description: "I need food and temporary shelter.",
-        declaredSafetyStatus: SafetyStatus.UNKNOWN,
+        description: "Need financial assistance for education.",
+        preferredLanguage: {
+          code: "en",
+          name: "English",
+        },
       },
+    },
 
-      services: [
-        {
-          id: "service-1",
-          code: "FOOD",
-          name: "Food Assistance",
-        },
-        {
-          id: "service-2",
-          code: "SHELTER",
-          name: "Shelter",
-        },
-      ],
+    service: {
+      id: "service-1",
+      code: "FINANCIAL_AID",
+      name: "Financial Aid",
+    },
+  };
 
-      recommendations: [
-        {
-          id: "recommendation-1",
+  const sharedData = {
+    contact: {
+      name: "John Doe",
+      email: "john@example.com",
+      phone: "9876543210",
+    },
 
-          status: RecommendationStatus.PENDING,
+    helpRequest: {
+      description: "Need financial assistance for education.",
+    },
 
-          score: 1,
+    preferredLanguage: {
+      code: "en",
+      name: "English",
+    },
 
-          reason: "Service available",
+    service: {
+      code: "FINANCIAL_AID",
+      name: "Financial Aid",
+    },
+  };
+  
+  it("creates a referral and approves the recommendation", async () => {
+    recommendationRepository.findByIdWithRelations.mockResolvedValue(
+      recommendation,
+    );
 
-          service: {
-            id: "service-1",
-            code: "FOOD",
-            name: "Food Assistance",
-          },
+    const createdAt = new Date();
+    
+    buildSpy.mockReturnValue(sharedData);
 
-          organizationService: {
-            organization: {
-              id: "organization-1",
-              name: "Helping Hands NGO",
-              website: "https://example.org",
-              email: "help@example.org",
-              phone: "9999999999",
-            },
-          },
-        },
-      ],
-    });
+    createReferralSpy.mockResolvedValue({
+      id: "referral-1",
+      status: ReferralStatus.SENT,
+      recommendationId: "recommendation-1",
+      caseId: "case-1",
+      createdAt,
+    } as any);
 
-    // Act
-    const result = await service.execute(caseId);
+    updateStatusSpy.mockResolvedValue({
+      id: "recommendation-1",
+      status: RecommendationStatus.APPROVED,
+    } as any);
 
-    // Assert
-    expect(caseRepository.findByIdWithRelations).toHaveBeenCalledWith(caseId);
+    const result = await service.execute("recommendation-1", input);
+
+    expect(recommendationRepository.findByIdWithRelations).toHaveBeenCalledWith(
+      "recommendation-1",
+    );
+
+    expect(buildSpy).toHaveBeenCalledWith(recommendation, input);
+
+    expect(createReferralSpy).toHaveBeenCalledWith(
+      "recommendation-1",
+      "case-1",
+      sharedData,
+    );
+
+    expect(updateStatusSpy).toHaveBeenCalledWith(
+      "recommendation-1",
+      RecommendationStatus.APPROVED,
+    );
+
+    expect(buildSpy.mock.invocationCallOrder[0]).toBeLessThan(
+      createReferralSpy.mock.invocationCallOrder[0],
+    );
+
+    expect(createReferralSpy.mock.invocationCallOrder[0]).toBeLessThan(
+      updateStatusSpy.mock.invocationCallOrder[0],
+    );
 
     expect(result).toEqual({
-      id: caseId,
-
-      status: CaseStatus.NEW,
-
-      evaluatedSafetyStatus: SafetyStatus.UNKNOWN,
-
-      helpRequest: {
-        id: "help-request-1",
-        description: "I need food and temporary shelter.",
-        declaredSafetyStatus: SafetyStatus.UNKNOWN,
-      },
-
-      services: [
-        {
-          id: "service-1",
-          code: "FOOD",
-          name: "Food Assistance",
-        },
-        {
-          id: "service-2",
-          code: "SHELTER",
-          name: "Shelter",
-        },
-      ],
-
-      recommendations: [
-        {
-          id: "recommendation-1",
-
-          status: RecommendationStatus.PENDING,
-
-          score: 1,
-
-          reason: "Service available",
-
-          service: {
-            id: "service-1",
-            code: "FOOD",
-            name: "Food Assistance",
-          },
-
-          organization: {
-            id: "organization-1",
-            name: "Helping Hands NGO",
-            website: "https://example.org",
-            email: "help@example.org",
-            phone: "9999999999",
-          },
-        },
-      ],
+      id: "referral-1",
+      status: ReferralStatus.SENT,
+      recommendationId: "recommendation-1",
+      caseId: "case-1",
+      createdAt,
     });
   });
 
-  it("throws when the case does not exist", async () => {
-    // Arrange
-    const caseId = "case-123";
+  it("throws when recommendation does not exist", async () => {
+    recommendationRepository.findByIdWithRelations.mockResolvedValue(null);
 
-    caseRepository.findByIdWithRelations.mockResolvedValue(null);
+    await expect(service.execute("recommendation-1", input)).rejects.toThrow(
+      NotFoundError,
+    );
 
-    // Act + Assert
-    await expect(service.execute(caseId)).rejects.toThrow(NotFoundError);
+    expect(buildSpy).not.toHaveBeenCalled();
 
-    expect(caseRepository.findByIdWithRelations).toHaveBeenCalledWith(caseId);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+
+    expect(createReferralSpy).not.toHaveBeenCalled();
+
+    expect(updateStatusSpy).not.toHaveBeenCalled();
+  });
+
+  it("throws when a referral already exists", async () => {
+    recommendationRepository.findByIdWithRelations.mockResolvedValue({
+      ...recommendation,
+      referral: {
+        id: "referral-1",
+      },
+    } as any);
+
+    await expect(service.execute("recommendation-1", input)).rejects.toThrow(
+      ConflictError,
+    );
+
+    expect(buildSpy).not.toHaveBeenCalled();
+
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+
+    expect(createReferralSpy).not.toHaveBeenCalled();
+
+    expect(updateStatusSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not approve the recommendation when referral creation fails", async () => {
+    recommendationRepository.findByIdWithRelations.mockResolvedValue(
+      recommendation,
+    );
+
+    buildSpy.mockReturnValue(sharedData as any);
+
+    const error = new Error("Referral creation failed");
+
+    createReferralSpy.mockRejectedValue(error);
+
+    await expect(service.execute("recommendation-1", input)).rejects.toThrow(
+      error,
+    );
+
+    expect(createReferralSpy).toHaveBeenCalled();
+
+    expect(updateStatusSpy).not.toHaveBeenCalled();
+  });
+
+  it("propagates approval errors after creating the referral", async () => {
+    recommendationRepository.findByIdWithRelations.mockResolvedValue(
+      recommendation,
+    );
+
+    buildSpy.mockReturnValue(sharedData as any);
+
+    createReferralSpy.mockResolvedValue({
+      id: "referral-1",
+    } as any);
+
+    const error = new Error("Approval failed");
+
+    updateStatusSpy.mockRejectedValue(error);
+
+    await expect(service.execute("recommendation-1", input)).rejects.toThrow(
+      error,
+    );
+
+    expect(createReferralSpy).toHaveBeenCalled();
+
+    expect(updateStatusSpy).toHaveBeenCalled();
+
+    expect(createReferralSpy.mock.invocationCallOrder[0]).toBeLessThan(
+      updateStatusSpy.mock.invocationCallOrder[0],
+    );
+  });
+
+  it("builds shared data before creating the referral", async () => {
+    recommendationRepository.findByIdWithRelations.mockResolvedValue(
+      recommendation,
+    );
+
+    buildSpy.mockReturnValue(sharedData as any);
+
+    createReferralSpy.mockResolvedValue({
+      id: "referral-1",
+      status: ReferralStatus.SENT,
+      recommendationId: "recommendation-1",
+      caseId: "case-1",
+      createdAt: new Date(),
+    } as any);
+
+    updateStatusSpy.mockResolvedValue({
+      id: "recommendation-1",
+      status: RecommendationStatus.APPROVED,
+    } as any);
+
+    await service.execute("recommendation-1", input);
+
+    expect(buildSpy).toHaveBeenCalledWith(recommendation, input);
+
+    expect(buildSpy.mock.invocationCallOrder[0]).toBeLessThan(
+      createReferralSpy.mock.invocationCallOrder[0],
+    );
   });
 });
