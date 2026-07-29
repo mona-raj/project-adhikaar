@@ -5,7 +5,7 @@ import { services } from "./data/services";
 import { languages } from "./data/languages";
 import { organizations } from "./data/organizations";
 
-async function main() {
+export async function seedDatabase() {
   console.log("Seeding database...");
 
   // Roles
@@ -133,7 +133,13 @@ async function main() {
   console.log("Database seeded successfully.");
 }
 
-main().catch((error) => {
-  console.error("Error seeding database:", error);
-  process.exit(1);
-});
+async function main() {
+  await seedDatabase();
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("Error seeding database:", error);
+    process.exit(1);
+  });
+}
