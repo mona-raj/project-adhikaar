@@ -1,17 +1,24 @@
-import type { ReactNode } from "react";
-
-interface SectionProps {
+type SectionProps = {
   id: string;
-  title: string;
-  children: ReactNode;
-}
+  children: React.ReactNode;
+};
 
-export default function Section({ id, title, children }: SectionProps) {
+export default function Section({ id, children }: SectionProps) {
   return (
-    <section id={id} className="scroll-mt-16 py-16">
-      <h2 className="mb-6 text-3xl font-bold text-slate-900">{title}</h2>
-
-      <div className="max-w-3xl space-y-6 leading-8 text-slate-700">{children}</div>
+    <section
+      id={id}
+      className={`py-28 ${id === "overview" ? "" : " border-t border-(--color-border)"}`}
+    >
+      <div
+        className="
+          mx-auto
+          max-w-(--max-width)
+          px-8
+          lg:px-16
+        "
+      >
+        {children}
+      </div>
     </section>
   );
 }

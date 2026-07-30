@@ -6,7 +6,15 @@ html {
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  /* font-family: var(--font-body); */
+
+  color: var(--color-text);
+
+  background: var(--color-surface);
+}
+
+h1 {
+  font-family: var(--font-heading);
 }
 
 * {

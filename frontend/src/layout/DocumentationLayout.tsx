@@ -8,11 +8,34 @@ interface DocumentationLayoutProps {
 
 export default function DocumentationLayout({ children }: DocumentationLayoutProps) {
   return (
-    <section className="bg-white">
-      <div className="mx-auto flex max-w-7xl gap-16 px-6 py-20 lg:px-8">
+    <section
+      className="
+        border-t
+        border-(--color-border)
+        bg-(--color-surface-alt)
+      "
+    >
+      <div
+        className="
+          mx-auto
+          flex
+          max-w-(--max-width)
+          gap-20
+          px-8
+          py-20
+          lg:px-16
+        "
+      >
         <Sidebar />
 
-        <main className="min-w-0 flex-1">{children}</main>
+        <main
+          className="
+            min-w-0
+            flex-1
+          "
+        >
+          {children}
+        </main>
       </div>
     </section>
   );

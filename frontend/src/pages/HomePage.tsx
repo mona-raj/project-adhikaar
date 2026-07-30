@@ -4,16 +4,18 @@ import Overview from "../features/landing/Overview";
 import Problem from "../features/landing/Problem";
 import Approach from "../features/landing/Approach";
 import Workflow from "../features/landing/Workflow";
-import Engineering from "../features/landing/Engineering";
-import Roadmap from "../features/landing/Roadmap";
-
 import DocumentationLayout from "../layout/DocumentationLayout";
 import Footer from "../layout/Footer";
+import Quote from "../features/landing/Quote";
+import Architecture from "../features/landing/Architecture";
+import Documentation from "../features/landing/Resources";
 
 export default function HomePage() {
   return (
     <>
       <Hero />
+
+      <Quote/>
 
       <DocumentationLayout>
         <Overview />
@@ -24,9 +26,9 @@ export default function HomePage() {
 
         <Workflow />
 
-        <Engineering />
+        <Architecture />
 
-        <Roadmap />
+        <Documentation />
       </DocumentationLayout>
 
       <Footer />

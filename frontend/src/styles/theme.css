@@ -1,34 +1,27 @@
 :root {
-  /* Natural Colors */
-  /* --forest-green: #0e8734; */
-  --forest-green: #007124;
-  /* --tuscan-sun: #edbb32; */
-  --tuscan-sun: #FFA200;
-  --color-white: #ffffff;
-  --color-black: #000000;
-
-  /* Brand Colors */
-  --color-primary: var(--forest-green);
-  --color-accent: var(--tuscan-sun);
+  /* Backgrounds */
+  --color-paper: #f5f1e8;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8f8f8;
 
   /* Text */
-  --color-text-primary: var(--color-white);
-  --color-text-secondary: rgba(255, 255, 255, 0.9);
+  --color-text: #161616;
+  --color-text-muted: #5f5f5f;
+  --color-text-inverse: #ffffff;
 
-  /* Backgrounds */
-  --color-bg-primary: var(--color-primary);
-  --color-bg-surface: var(--color-white);
+  /* Brand */
+  --color-accent: #a61e1e;
+  --color-accent-hover: #8e1b1b;
 
   /* Borders */
-  --color-border-light: rgba(255, 255, 255, 0.25);
+  --color-border: #161616;
+  --color-border-light: #d9d9d9;
 
-  /* Shadows */
-  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.18);
+  /* Layout */
+  --max-width: 1280px;
 
-  /* Radius */
-  --radius-card: 1.5rem;
-  --radius-button: 0.75rem;
-
-  /* Spacing */
-  --section-padding: 6rem;
+  /* Fonts */
+  --font-heading: "Oswald", sans-serif;
+  --font-ui: "Inter", sans-serif;
+  --font-body: "Source Serif 4", serif;
 }
