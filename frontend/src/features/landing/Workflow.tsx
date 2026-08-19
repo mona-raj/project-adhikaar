@@ -1,5 +1,6 @@
 import Section from "../../components/ui/Section";
 import SectionHeading from "../../components/ui/SectionHeading";
+// import WorkflowDiagram from "../../components/diagrams/WorkflowDiagram";
 
 const steps = [
   {
@@ -52,7 +53,7 @@ export default function HowItWorks() {
         remain in control of every important decision.
       </p>
 
-      {/* Workflow Diagram */}
+      {/* Workflow Diagram
 
       <div
         className="
@@ -63,8 +64,8 @@ export default function HowItWorks() {
           bg-(--color-surface)
         "
       >
-        <img src="/diagrams/workflow.svg" alt="Project Adhikaar workflow" className="w-full" />
-      </div>
+        <WorkflowDiagram />
+      </div> */}
 
       {/* Steps */}
 

@@ -7,7 +7,7 @@ export default function Footer() {
         border-t
         border-(--color-border)
         py-16
-        bg-(--color-paper)
+        bg-(--color-accent)
       "
     >
       <div
@@ -20,6 +20,7 @@ export default function Footer() {
           justify-between
           gap-6
           px-8
+          text-(--color-text-inverse)
           text-center
           lg:flex-row
           lg:px-16
@@ -29,7 +30,6 @@ export default function Footer() {
         <div>
           <p
             className="
-              font-(--font-heading)
               text-2xl
               uppercase
             "
@@ -41,7 +41,6 @@ export default function Footer() {
             className="
               mt-2
               text-sm
-              text-(--color-text-muted)
             "
           >
             Open Source • MIT License
@@ -51,7 +50,6 @@ export default function Footer() {
             className="
               mt-6
               text-sm
-              text-(--color-text-muted)
             "
           >
             © 2026 Project Adhikaar
@@ -66,8 +64,7 @@ export default function Footer() {
               inline-flex
               items-center
               gap-3
-              border-2
-              border-(--color-border)
+              underline
               px-8
               py-4
               font-(--font-ui)

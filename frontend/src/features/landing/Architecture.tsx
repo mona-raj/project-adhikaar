@@ -1,5 +1,6 @@
 import Section from "../../components/ui/Section";
 import SectionHeading from "../../components/ui/SectionHeading";
+import ArchitectureDiagram from "../../components/diagrams/ArchitectureDiagram";
 
 const decisions = [
   "Documentation-first workflow",
@@ -40,10 +41,11 @@ export default function Architecture() {
           bg-(--color-surface)
         "
       >
-        <img src="/diagrams/architecture.svg" alt="Layered architecture" className="w-full" />
+        <ArchitectureDiagram />
+
       </div>
 
-      {/* Domain */}
+      {/* Domain
 
       <div className="mt-24">
         <h3
@@ -68,7 +70,7 @@ export default function Architecture() {
         >
           <img src="/diagrams/er-diagram.svg" alt="Domain model" className="w-full" />
         </div>
-      </div>
+      </div> */}
 
       {/* Decisions */}
 
